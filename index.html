@@ -6,49 +6,46 @@
     <title>S × S Private Space</title>
     <style>
         :root { --pink: #ff758c; --blue: #0093e9; --dark: #050505; --border: rgba(255, 255, 255, 0.1); }
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--dark); color: white; overflow: hidden; display: flex; height: 100vh; width: 100vw; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { background: var(--dark); color: white; overflow: hidden; display: flex; height: 100vh; width: 100vw; }
         
-        /* Side Nav */
-        .side-nav { width: 65px; height: 100%; background: #000; border-right: 1px solid var(--border); display: none; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; }
-        .nav-item { font-size: 0.55rem; font-weight: bold; color: #444; cursor: pointer; margin-bottom: 25px; text-align: center; border-radius: 12px; transition: 0.3s; }
+        /* Side Navigation - Fixed Error Layout */
+        .side-nav { width: 65px; height: 100%; background: #000; border-right: 1px solid var(--border); display: none; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; flex-shrink: 0; }
+        .nav-item { font-size: 0.55rem; font-weight: bold; color: #444; cursor: pointer; margin-bottom: 30px; text-align: center; transition: 0.3s; width: 100%; }
         .nav-item.active { color: white; text-shadow: 0 0 10px var(--pink); }
 
-        .viewport { flex-grow: 1; height: 100%; position: relative; }
+        .viewport { flex-grow: 1; height: 100%; position: relative; overflow: hidden; }
         .screen { position: absolute; width: 100%; height: 100%; padding: 15px; display: none; flex-direction: column; overflow-y: auto; }
-        .screen.active { display: flex; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .screen.active { display: flex; }
 
-        /* Login Clean */
+        /* Login Screen */
         #scr-login { justify-content: center; align-items: center; background: #000; z-index: 9999; }
         .login-box { width: 85%; max-width: 320px; text-align: center; }
-        .brand-logo { font-size: 2.5rem; font-weight: 100; letter-spacing: 15px; margin-bottom: 40px; color: white; }
-        input { width: 100%; padding: 18px; background: #0a0a0a; border: 1px solid #222; color: white; border-radius: 20px; margin-bottom: 15px; text-align: center; font-size: 0.8rem; letter-spacing: 2px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--pink); }
+        .brand-logo { font-size: 2.5rem; font-weight: 100; letter-spacing: 15px; margin-bottom: 40px; }
+        input { width: 100%; padding: 18px; background: #0a0a0a; border: 1px solid #222; color: white; border-radius: 20px; margin-bottom: 15px; text-align: center; outline: none; }
 
         /* Studio Engine */
-        #studio-container { flex: 0 0 420px; background: #fff; border-radius: 25px; position: relative; overflow: hidden; margin: 10px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #mmg-layer { position: absolute; z-index: 1; cursor: grab; transform-origin: center; }
+        #studio-container { flex-shrink: 0; height: 420px; background: #fff; border-radius: 25px; position: relative; overflow: hidden; margin: 10px 0; }
+        #mmg-layer { position: absolute; z-index: 1; cursor: grab; }
         #mmg-layer img { height: 350px; pointer-events: none; opacity: 0.3; }
         #draw-canvas { position: absolute; top: 0; left: 0; z-index: 2; width: 100%; height: 100%; touch-action: none; }
 
-        /* Controls */
-        .shelf { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; }
-        .t-box { flex: 0 0 60px; height: 60px; background: #111; border-radius: 15px; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; }
-        .t-box.active { border-color: var(--pink); background: #1a1a1a; }
-        .t-box img { height: 75%; opacity: 0.6; }
+        /* UI Elements */
+        .shelf { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .t-box { flex: 0 0 55px; height: 55px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #222; }
+        .t-box.active { border: 2px solid var(--pink); }
+        .t-box img { height: 70%; opacity: 0.5; }
 
-        .btn-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
-        .btn-act { background: #111; border: 1px solid #222; color: white; padding: 12px 0; border-radius: 12px; font-size: 0.6rem; font-weight: bold; transition: 0.2s; }
-        .btn-act:active { transform: scale(0.95); }
+        .btn-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 10px; }
+        .btn-act { background: #111; border: 1px solid #222; color: white; padding: 12px 0; border-radius: 12px; font-size: 0.6rem; font-weight: bold; }
         
         /* Reality Overlay */
         #reality-view { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
-        .mockup-card { position: relative; width: 88%; max-width: 380px; border-radius: 30px; overflow: hidden; background: #fff; box-shadow: 0 0 40px rgba(0,0,0,1); }
-        #mock-canvas { position: absolute; top: 15%; left: 0; width: 100%; height: 70%; pointer-events: none; opacity: 0.8; filter: contrast(1.1); }
+        .mockup-card { position: relative; width: 85%; border-radius: 20px; overflow: hidden; background: #fff; }
+        #mock-canvas { position: absolute; top: 15%; left: 0; width: 100%; height: 70%; pointer-events: none; opacity: 0.7; }
         
-        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; padding-bottom: 30px; }
-        .gallery img { width: 100%; border-radius: 15px; border: 1px solid var(--border); }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .gallery img { width: 100%; border-radius: 10px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -56,7 +53,7 @@
     <div id="side-nav" class="side-nav">
         <div class="nav-item active" onclick="go('home', this)">HOME</div>
         <div class="nav-item" onclick="go('busana', this)">STUDIO</div>
-        <div class="nav-item" onclick="go('chat', this)">CHAT</div>
+        <div class="nav-item" onclick="go('foto', this)">FOTO</div>
     </div>
 
     <div class="viewport">
@@ -64,19 +61,13 @@
             <div class="login-box">
                 <div class="brand-logo">S×S</div>
                 <input type="password" id="pass" placeholder="PASSWORD">
-                <button onclick="auth()" style="width:100%; padding:18px; border-radius:20px; background:linear-gradient(45deg, var(--blue), var(--pink)); color:white; border:none; font-weight:bold; letter-spacing:3px; font-size:0.7rem;">ENTER SPACE</button>
+                <button onclick="auth()" style="width:100%; padding:18px; border-radius:20px; background:linear-gradient(45deg, var(--blue), var(--pink)); color:white; border:none; font-weight:bold;">ENTER SPACE</button>
             </div>
         </div>
 
         <div id="tab-home" class="screen">
-            <div style="text-align: center; margin-top: 60px;">
-                <h1 style="font-weight: 100; letter-spacing: 10px;">WELCOME</h1>
-                <p style="color: #444; letter-spacing: 2px; font-size: 0.7rem;">PRIVATE DOMAIN ACTIVE</p>
-                <div style="margin-top: 50px; padding: 20px; border: 1px solid #111; border-radius: 20px;">
-                    <p style="font-size: 0.8rem; color: #888;">"Desain adalah bahasa yang tidak butuh kata-kata."</p>
-                </div>
-                <button onclick="location.reload()" style="background:transparent; color:#333; border:1px solid #222; padding:10px 20px; border-radius:30px; margin-top: 40px; font-size: 0.6rem;">SECURE LOGOUT</button>
-            </div>
+            <h2 style="text-align:center; margin-top:50px; font-weight:100; letter-spacing:5px;">PRIVATE SPACE</h2>
+            <button onclick="location.reload()" style="margin: 30px auto; padding: 10px 20px; border-radius:20px; border:1px solid #222; background:none; color:#555;">LOGOUT</button>
         </div>
 
         <div id="tab-busana" class="screen">
@@ -85,7 +76,6 @@
                 <div class="t-box" onclick="setM('https://i.imgur.com/8Qp4R8C.png', this)"><img src="https://i.imgur.com/8Qp4R8C.png"></div>
                 <div class="t-box" onclick="setM('https://i.imgur.com/P3UjN3F.png', this)"><img src="https://i.imgur.com/P3UjN3F.png"></div>
                 <div class="t-box" onclick="setM('https://i.imgur.com/2P3B8jK.png', this)"><img src="https://i.imgur.com/2P3B8jK.png"></div>
-                <div class="t-box" onclick="setM('https://i.imgur.com/T0T5M7A.png', this)"><img src="https://i.imgur.com/T0T5M7A.png"></div>
             </div>
 
             <div id="studio-container">
@@ -96,20 +86,23 @@
             </div>
 
             <div class="btn-row">
-                <input type="color" id="pen-color" value="#ff758c" style="width:100%; height:40px; border:none; background:none;">
+                <input type="color" id="pen-color" value="#ff758c" style="width:100%; height:35px; border:none; background:none;">
                 <button class="btn-act" onclick="xfrm('s', 1.1)">➕</button>
                 <button class="btn-act" onclick="xfrm('s', 0.9)">➖</button>
                 <button class="btn-act" onclick="xfrm('r', 15)">🔄</button>
                 <button class="btn-act" onclick="xfrm('o', 0)">💡</button>
             </div>
 
-            <button class="btn-act" style="width:100%; background:linear-gradient(to right, #6a11cb, #2575fc); margin-bottom:10px; border:none; padding:15px;" onclick="openReal()">PREVIEW HASIL NYATA</button>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button class="btn-act" style="width:100%; background:var(--blue); border:none; margin-bottom:10px;" onclick="openReal()">PREVIEW HASIL NYATA</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
                 <button class="btn-act" onclick="clearD()">RESET</button>
-                <button class="btn-act" style="background:var(--pink); border:none;" onclick="saveD()">SIMPAN ARSIP</button>
+                <button class="btn-act" style="background:var(--pink); border:none;" onclick="saveD()">SAVE</button>
             </div>
-
             <div id="portfolio" class="gallery"></div>
+        </div>
+
+        <div id="tab-foto" class="screen">
+            <p>Fitur Foto Segera Hadir.</p>
         </div>
     </div>
 
@@ -118,17 +111,20 @@
             <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000" style="width:100%;">
             <canvas id="mock-canvas"></canvas>
         </div>
-        <button onclick="closeReal()" style="margin-top:30px; padding:15px 40px; border-radius:30px; border:none; background:white; color:black; font-weight:bold; font-size:0.7rem; letter-spacing:2px;">BACK TO EDIT</button>
+        <button onclick="closeReal()" style="margin-top:20px; padding:10px 30px; border-radius:20px; border:none; background:white; font-weight:bold;">CLOSE</button>
     </div>
 
     <script>
-        // AUTH & NAVIGATION
+        let cvs, ctx, drawing = false;
+        let mmg = document.getElementById('mmg-layer'), scale = 1, rot = 0, opac = 0.3;
+        let isDrag = false, sx, sy, ix, iy;
+
         function auth() {
             if(document.getElementById('pass').value === "sampai lulus") {
                 document.getElementById('scr-login').style.display = 'none';
                 document.getElementById('side-nav').style.display = 'flex';
                 go('busana', document.querySelectorAll('.nav-item')[1]);
-            } else { alert("ACCESS DENIED"); }
+            } else { alert("WRONG!"); }
         }
 
         function go(t, el) {
@@ -139,24 +135,18 @@
             if(t === 'busana') setTimeout(initDraw, 100);
         }
 
-        // TEMPLATE TRANSFORM
-        let mmg = document.getElementById('mmg-layer'), scale = 1, rot = 0, opac = 0.3;
-        let isDrag = false, sx, sy, ix, iy;
-
-        mmg.onmousedown = mmg.ontouchstart = (e) => {
+        // Drag Logic
+        mmg.ontouchstart = (e) => {
             isDrag = true;
-            const cx = e.touches ? e.touches[0].clientX : e.clientX;
-            const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            sx = cx; sy = cy; ix = mmg.offsetLeft; iy = mmg.offsetTop;
+            sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+            ix = mmg.offsetLeft; iy = mmg.offsetTop;
         };
-        window.onmousemove = window.ontouchmove = (e) => {
-            if(!isDrag) return;
-            const cx = e.touches ? e.touches[0].clientX : e.clientX;
-            const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            mmg.style.left = (ix + (cx - sx)) + 'px';
-            mmg.style.top = (iy + (cy - sy)) + 'px';
+        window.ontouchmove = (e) => {
+            if (!isDrag) return;
+            mmg.style.left = (ix + (e.touches[0].clientX - sx)) + 'px';
+            mmg.style.top = (iy + (e.touches[0].clientY - sy)) + 'px';
         };
-        window.onmouseup = window.ontouchend = () => isDrag = false;
+        window.ontouchend = () => isDrag = false;
 
         function xfrm(type, val) {
             if(type === 's') scale *= val;
@@ -172,43 +162,36 @@
             img.src = url; img.style.display = (url === 'none') ? 'none' : 'block';
         }
 
-        // DRAWING ENGINE
-        let cvs, ctx, drawing = false;
         function initDraw() {
             cvs = document.getElementById('draw-canvas'); ctx = cvs.getContext('2d');
             cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
             ctx.lineCap = 'round'; ctx.lineWidth = 3;
+            
             const getP = (e) => {
                 const r = cvs.getBoundingClientRect();
                 const x = e.touches ? e.touches[0].clientX : e.clientX;
                 const y = e.touches ? e.touches[0].clientY : e.clientY;
                 return { x: x - r.left, y: y - r.top };
             };
-            cvs.onmousedown = cvs.ontouchstart = (e) => { drawing = true; ctx.beginPath(); const p = getP(e); ctx.moveTo(p.x, p.y); };
-            cvs.onmousemove = cvs.ontouchmove = (e) => {
-                if(!drawing) return; if(e.touches) e.preventDefault();
-                ctx.strokeStyle = document.getElementById('pen-color').value;
-                const p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke();
-            };
-            cvs.onmouseup = cvs.ontouchend = () => drawing = false;
+
+            cvs.ontouchstart = (e) => { drawing = true; ctx.beginPath(); const p = getP(e); ctx.moveTo(p.x, p.y); };
+            cvs.ontouchmove = (e) => { if(!drawing) return; e.preventDefault(); ctx.strokeStyle = document.getElementById('pen-color').value; const p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+            cvs.ontouchend = () => drawing = false;
         }
 
-        // MOCKUP VIEW
         function openReal() {
-            const mockCvs = document.getElementById('mock-canvas');
-            const mCtx = mockCvs.getContext('2d');
-            mockCvs.width = cvs.width; mockCvs.height = cvs.height;
-            mCtx.clearRect(0,0,mockCvs.width, mockCvs.height);
-            mCtx.drawImage(cvs, 0, 0);
+            const mc = document.getElementById('mock-canvas');
+            const mctx = mc.getContext('2d');
+            mc.width = cvs.width; mc.height = cvs.height;
+            mctx.drawImage(cvs, 0, 0);
             document.getElementById('reality-view').style.display = 'flex';
         }
         function closeReal() { document.getElementById('reality-view').style.display = 'none'; }
-
         function clearD() { ctx.clearRect(0,0,cvs.width,cvs.height); }
         function saveD() {
             const img = document.createElement('img'); img.src = cvs.toDataURL();
             document.getElementById('portfolio').prepend(img);
-            alert("Berhasil disimpan ke arsip Sabila! ✨");
+            alert("SAVED!");
         }
     </script>
 </body>

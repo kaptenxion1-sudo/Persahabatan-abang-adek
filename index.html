@@ -2,212 +2,176 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Space | Ultra Fluid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quantum Space | Navigation Edition</title>
     <style>
-        :root {
-            --pink: #ff758c;
-            --blue: #0093e9;
-            --dark: #050505;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-        }
+        :root { --pink: #ff758c; --blue: #0093e9; --dark: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--dark); color: white; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .bg-glow { position: fixed; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 0% 0%, rgba(0, 147, 233, 0.2), transparent 40%), radial-gradient(circle at 100% 100%, rgba(255, 117, 140, 0.2), transparent 40%); }
+        
+        .viewport { width: 95%; max-width: 500px; height: 90vh; position: relative; overflow: hidden; border-radius: 25px; border: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(20px); display: flex; flex-direction: column; }
+        
+        /* Navigasi Atas */
+        .nav-menu { display: none; justify-content: space-around; padding: 15px 10px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+        .nav-item { font-size: 0.75rem; font-weight: bold; color: #666; cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 8px; }
+        .nav-item.active { color: white; background: var(--glass); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        .screen { position: absolute; width: 100%; height: 100%; padding: 20px; transition: 0.5s ease; display: none; flex-direction: column; overflow-y: auto; }
+        .screen.active { display: flex; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        body {
-            margin: 0; padding: 0;
-            background: var(--dark);
-            color: white;
-            overflow: hidden; /* Biar transisi geser gak bikin scroll bar aneh */
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
-        }
-
-        /* Background Dinamis */
-        .bg-glow {
-            position: fixed; width: 100vw; height: 100vh; z-index: -1;
-            background: radial-gradient(circle at 0% 0%, rgba(0, 147, 233, 0.2), transparent 40%),
-                        radial-gradient(circle at 100% 100%, rgba(255, 117, 140, 0.2), transparent 40%);
-        }
-
-        /* Container Utama dengan Animasi Geser */
-        .viewport {
-            width: 95%; max-width: 1000px;
-            height: 85vh;
-            position: relative;
-            overflow: hidden;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-        }
-
-        .screen {
-            position: absolute;
-            width: 100%; height: 100%;
-            padding: 40px;
-            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.5s;
-            display: flex; flex-direction: column;
-        }
-
-        /* Animasi Geser State */
-        .screen.hidden-left { transform: translateX(-100%); opacity: 0; pointer-events: none; }
-        .screen.hidden-right { transform: translateX(100%); opacity: 0; pointer-events: none; }
-        .screen.active { transform: translateX(0); opacity: 1; pointer-events: auto; }
-
-        /* Login Styling */
-        .login-box { display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        input {
-            width: 100%; max-width: 300px; padding: 15px; margin: 10px 0;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            border-radius: 12px; color: white; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--blue); background: rgba(255,255,255,0.1); }
-
-        button {
-            padding: 15px 30px; border: none; border-radius: 12px; font-weight: bold;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
-        }
+        /* Login */
+        .login-box { justify-content: center; align-items: center; text-align: center; }
+        input, textarea { width: 100%; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
+        button { padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
         .btn-blue { background: var(--blue); color: white; }
         .btn-pink { background: var(--pink); color: white; }
-        .btn-blue:hover, .btn-pink:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
-        /* Dashboard Layout */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-grow: 1; overflow: hidden; }
-        .col { background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
-
-        /* Chat Animasi */
-        .chat-bubble {
-            margin: 10px 0; padding: 12px 18px; border-radius: 18px; font-size: 0.9rem;
-            animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-            opacity: 0; transform: translateY(20px);
-        }
-        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-
-        /* Canvas / Fashion Studio */
-        #canvas { background: white; border-radius: 15px; width: 100%; height: 250px; cursor: crosshair; }
-
-        /* Custom Scrollbar */
-        .col::-webkit-scrollbar { width: 5px; }
-        .col::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
+        /* Content Styles */
+        .card { background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .chat-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; margin-bottom: 15px; }
+        .chat-bubble { padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; border-left: 4px solid transparent; }
+        
+        #canvas { background: white; border-radius: 15px; width: 100%; height: 300px; touch-action: none; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
-
     <div class="bg-glow"></div>
-
     <div class="viewport">
+        
+        <div id="main-nav" class="nav-menu">
+            <div class="nav-item active" onclick="openTab('home')">HOME</div>
+            <div class="nav-item" onclick="openTab('curhat')">CURHAT</div>
+            <div class="nav-item" onclick="openTab('foto')">FOTO</div>
+            <div class="nav-item" onclick="openTab('busana')">BUSANA</div>
+        </div>
+
         <div id="scr-login" class="screen active login-box">
-            <h1 style="letter-spacing: 10px; opacity: 0.5;">QUANTUM V8.0</h1>
+            <h1 style="letter-spacing: 5px; margin-bottom: 30px;">QUANTUM<br><span style="color:var(--pink)">V8.0</span></h1>
             <input type="text" id="user" placeholder="USERNAME">
             <input type="password" id="pass" placeholder="PASSWORD">
-            <button class="btn-blue" onclick="toDashboard()">UNLOCK ACCESS</button>
+            <button class="btn-blue" style="width: 100%" onclick="toDashboard()">UNLOCK ACCESS</button>
         </div>
 
-        <div id="scr-dash" class="screen hidden-right">
-            <div class="header">
-                <h2 id="title"><span style="color:var(--blue)">SYAHRUL</span> <span style="color:var(--pink)">SABILA</span></h2>
-                <button class="btn-pink" style="padding: 8px 15px; font-size: 10px;" onclick="toLogin()">LOCK</button>
+        <div id="tab-home" class="screen">
+            <div class="card" style="text-align: center;">
+                <h2 style="margin:0"><span style="color:var(--blue)">SYAHRUL</span> × <span style="color:var(--pink)">SABILA</span></h2>
+                <p style="color: #888; font-size: 0.8rem;">Welcome back to your private space.</p>
             </div>
+            <div class="card">
+                <p style="font-size: 0.8rem; margin: 0; color: var(--blue);">STATUS SISTEM</p>
+                <p style="font-size: 1.2rem; margin: 5px 0;">Online & Secured</p>
+            </div>
+            <button class="btn-pink" onclick="location.reload()" style="margin-top: auto;">LOCK SYSTEM</button>
+        </div>
 
-            <div class="grid">
-                <div class="col">
-                    <p style="color: var(--blue); font-weight: bold; font-size: 0.8rem;">💬 LOG CURHAT</p>
-                    <div id="chat-list" style="flex-grow: 1;"></div>
-                    <textarea id="msg" placeholder="Ketik curhatan..." style="width:100%; background:none; border:1px solid var(--border); color:white; border-radius:10px; padding:10px; margin-top:10px;"></textarea>
-                    <div style="display:flex; gap:10px; margin-top:10px;">
-                        <button class="btn-blue" style="flex:1" onclick="kirim('SYAHRUL')">SYAHRUL</button>
-                        <button class="btn-pink" style="flex:1" onclick="kirim('SABILA')">SABILA</button>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <p style="color: var(--pink); font-weight: bold; font-size: 0.8rem;">👗 SABILA'S FASHION STUDIO</p>
-                    <canvas id="canvas"></canvas>
-                    <div style="margin-top:10px; display:flex; gap:5px; flex-wrap:wrap;">
-                        <button class="btn-pink" style="padding:5px 10px; font-size:10px;" onclick="clearCanvas()">RESET</button>
-                        <button class="btn-blue" style="padding:5px 10px; font-size:10px;" onclick="saveImg()">SAVE</button>
-                        <input type="color" id="color" style="width:30px; height:30px; padding:0; border:none; background:none;">
-                    </div>
-                    <div id="portfolio" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;"></div>
+        <div id="tab-curhat" class="screen">
+            <div id="chat-list" class="chat-list"></div>
+            <div class="card" style="margin-top: auto;">
+                <textarea id="msg" placeholder="Ada cerita apa hari ini?" rows="2"></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-blue" style="flex:1" onclick="kirim('SYAHRUL')">SYAHRUL</button>
+                    <button class="btn-pink" style="flex:1" onclick="kirim('SABILA')">SABILA</button>
                 </div>
             </div>
         </div>
+
+        <div id="tab-foto" class="screen">
+            <div class="card">
+                <p style="font-size: 0.8rem; color: var(--blue); margin-bottom: 10px;">UPLOAD MEMORIES</p>
+                <input type="file" id="img-input" accept="image/*" onchange="upFoto()">
+            </div>
+            <div id="gallery" class="gallery-grid"></div>
+        </div>
+
+        <div id="tab-busana" class="screen">
+            <p style="text-align: center; color: var(--pink); font-weight: bold; margin-bottom: 10px;">SABILA'S FASHION STUDIO</p>
+            <canvas id="canvas"></canvas>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <input type="color" id="color" style="width: 50px; height: 45px; border: none; background: none;">
+                <button class="btn-pink" style="flex:1" onclick="clearCanvas()">RESET</button>
+                <button class="btn-blue" style="flex:1" onclick="saveImg()">SAVE</button>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: #888;">MY PORTFOLIO</p>
+            <div id="portfolio" class="gallery-grid" style="margin-top: 10px;"></div>
+        </div>
+
     </div>
 
     <script>
-        // --- ANIMASI GESER ---
         function toDashboard() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-            if(u === "Sasah" && p === "sampai lulus") {
-                document.getElementById('scr-login').classList.replace('active', 'hidden-left');
-                document.getElementById('scr-dash').classList.replace('hidden-right', 'active');
-                initCanvas();
-            } else {
-                alert("PASS SALAH, BANGSAT!");
-            }
+            const u = document.getElementById('user').value.toLowerCase();
+            const p = document.getElementById('pass').value.toLowerCase();
+            if((u === "sasah" || u === "sasha") && p === "sampai lulus") {
+                document.getElementById('scr-login').classList.remove('active');
+                document.getElementById('main-nav').style.display = 'flex';
+                openTab('home');
+            } else { alert("ACCESS DENIED!"); }
         }
 
-        function toLogin() {
-            document.getElementById('scr-dash').classList.replace('active', 'hidden-right');
-            document.getElementById('scr-login').classList.replace('hidden-left', 'active');
+        function openTab(tabName) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if(tabName === 'busana') setTimeout(initCanvas, 100);
         }
 
-        // --- FITUR CHAT ---
         function kirim(who) {
-            const txt = document.getElementById('msg').value;
-            if(!txt) return;
-            const list = document.getElementById('chat-list');
-            const b = document.createElement('div');
-            b.className = 'chat-bubble';
+            const txt = document.getElementById('msg').value; if(!txt) return;
+            const b = document.createElement('div'); b.className = 'chat-bubble';
             b.style.background = (who === 'SYAHRUL') ? 'rgba(0,147,233,0.1)' : 'rgba(255,117,140,0.1)';
-            b.style.borderLeft = `3px solid ${(who === 'SYAHRUL') ? 'var(--blue)' : 'var(--pink)'}`;
+            b.style.borderLeftColor = (who === 'SYAHRUL') ? 'var(--blue)' : 'var(--pink)';
             b.innerHTML = `<b style="font-size:0.7rem; color:${(who === 'SYAHRUL') ? 'var(--blue)' : 'var(--pink)'}">${who}</b><br>${txt}`;
-            list.prepend(b);
+            document.getElementById('chat-list').prepend(b);
             document.getElementById('msg').value = '';
         }
 
-        // --- FITUR SKETCH (BUSANA) ---
-        let cvs, ctx, drawing = false;
-        function initCanvas() {
-            cvs = document.getElementById('canvas');
-            ctx = cvs.getContext('2d');
-            cvs.width = cvs.offsetWidth;
-            cvs.height = cvs.offsetHeight;
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-
-            cvs.addEventListener('mousedown', () => drawing = true);
-            cvs.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
-            cvs.addEventListener('mousemove', draw);
+        function upFoto() {
+            const file = document.getElementById('img-input').files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img'); img.src = e.target.result;
+                document.getElementById('gallery').prepend(img);
+            }; reader.readAsDataURL(file);
         }
 
-        function draw(e) {
-            if(!drawing) return;
-            ctx.strokeStyle = document.getElementById('color').value;
-            const rect = cvs.getBoundingClientRect();
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        // Canvas Logic
+        let cvs, ctx, drawing = false;
+        function initCanvas() {
+            cvs = document.getElementById('canvas'); ctx = cvs.getContext('2d');
+            cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
+            ctx.lineCap = 'round'; ctx.lineWidth = 3;
+
+            const getPos = (e) => {
+                const rect = cvs.getBoundingClientRect();
+                return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            };
+
+            const start = (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+            const draw = (e) => { 
+                if(!drawing) return; 
+                ctx.strokeStyle = document.getElementById('color').value;
+                const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); 
+            };
+            const stop = () => drawing = false;
+
+            cvs.onmousedown = start; cvs.onmousemove = draw; window.onmouseup = stop;
+            cvs.ontouchstart = (e) => { start(e.touches[0]); e.preventDefault(); };
+            cvs.ontouchmove = (e) => { draw(e.touches[0]); e.preventDefault(); };
+            cvs.ontouchend = stop;
         }
 
         function clearCanvas() { ctx.clearRect(0,0,cvs.width,cvs.height); }
-
         function saveImg() {
-            const data = cvs.toDataURL();
-            const port = document.getElementById('portfolio');
-            const img = document.createElement('img');
-            img.src = data;
-            img.style.width = '100%';
-            img.style.borderRadius = '10px';
-            img.style.border = '1px solid var(--border)';
-            port.prepend(img);
+            const img = document.createElement('img'); img.src = cvs.toDataURL();
+            document.getElementById('portfolio').prepend(img);
             clearCanvas();
         }
     </script>

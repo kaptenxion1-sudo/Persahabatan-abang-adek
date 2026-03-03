@@ -9,36 +9,35 @@
         * { box-sizing: border-box; font-family: sans-serif; margin: 0; padding: 0; touch-action: manipulation; }
         body { background: var(--dark); color: white; overflow: hidden; display: flex; height: 100vh; width: 100vw; }
         
-        /* Navigasi Samping */
-        .side-nav { width: 70px; height: 100%; background: #000; border-right: 1px solid #222; display: none; flex-direction: column; align-items: center; padding-top: 20px; z-index: 5000; flex-shrink: 0; }
+        /* Navbar Samping */
+        .side-nav { width: 70px; height: 100%; background: #000; border-right: 1px solid #1a1a1a; display: none; flex-direction: column; align-items: center; padding-top: 20px; z-index: 5000; flex-shrink: 0; }
         .nav-item { font-size: 0.6rem; font-weight: bold; color: #444; margin-bottom: 30px; cursor: pointer; text-align: center; width: 100%; padding: 10px 0; }
         .nav-item.active { color: var(--pink); border-right: 3px solid var(--pink); }
 
-        .viewport { flex-grow: 1; height: 100%; position: relative; overflow: hidden; }
-        .screen { position: absolute; width: 100%; height: 100%; padding: 15px; display: none; flex-direction: column; overflow-y: auto; z-index: 10; }
+        .viewport { flex-grow: 1; height: 100%; position: relative; overflow: hidden; background: #080808; }
+        .screen { position: absolute; width: 100%; height: 100%; padding: 15px; display: none; flex-direction: column; z-index: 10; }
         .screen.active { display: flex; }
 
-        /* Login - Paling Depan */
+        /* Login */
         #scr-login { justify-content: center; align-items: center; background: #000; z-index: 9999; }
-        .login-box { width: 80%; text-align: center; }
-        input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 15px; margin-bottom: 15px; text-align: center; outline: none; }
-        .btn-main { width: 100%; padding: 15px; border-radius: 15px; background: var(--blue); color: white; border: none; font-weight: bold; cursor: pointer; }
+        .brand-logo { font-size: 3rem; font-weight: 100; letter-spacing: 15px; margin-bottom: 40px; }
+        input { width: 80%; max-width: 300px; padding: 15px; background: #111; border: 1px solid #333; color: white; border-radius: 20px; text-align: center; outline: none; margin-bottom: 15px; }
 
-        /* Studio Elements */
-        #studio-container { flex-shrink: 0; height: 400px; background: #fff; border-radius: 20px; position: relative; overflow: hidden; margin: 10px 0; border: 2px solid #222; }
-        #mmg-layer { position: absolute; z-index: 1; pointer-events: auto; }
-        #mmg-layer img { height: 320px; opacity: 0.3; pointer-events: none; }
+        /* Studio Engine */
+        #studio-box { flex-shrink: 0; height: 420px; background: #fff; border-radius: 25px; position: relative; overflow: hidden; margin: 10px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #mmg-layer { position: absolute; z-index: 1; top: 10%; left: 15%; width: 250px; cursor: move; }
+        #mmg-layer img { width: 100%; opacity: 0.3; pointer-events: none; }
         #draw-canvas { position: absolute; top: 0; left: 0; z-index: 5; width: 100%; height: 100%; touch-action: none; }
 
-        .shelf { display: flex; gap: 10px; overflow-x: auto; padding: 5px; z-index: 100; position: relative; }
-        .t-box { flex: 0 0 55px; height: 55px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #333; cursor: pointer; }
-        .t-box.active { border-color: var(--pink); }
-        .t-box img { height: 70%; opacity: 0.5; }
+        /* Tools */
+        .shelf { display: flex; gap: 10px; overflow-x: auto; padding: 10px 5px; z-index: 100; }
+        .t-box { flex: 0 0 65px; height: 65px; background: #111; border-radius: 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #222; }
+        .t-box.active { border: 2px solid var(--pink); }
+        .t-box span { font-size: 0.5rem; color: #555; text-align: center; }
 
-        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin: 10px 0; z-index: 100; position: relative; }
-        .btn-tool { background: #111; border: 1px solid #333; color: white; padding: 12px 0; border-radius: 10px; font-size: 0.6rem; cursor: pointer; font-weight: bold; }
-
-        /* Overlay */
+        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 10px; }
+        .btn-tool { background: #111; border: 1px solid #222; color: white; padding: 12px 0; border-radius: 12px; font-size: 0.6rem; font-weight: bold; }
+        
         #reality-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 8000; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
@@ -51,55 +50,54 @@
 
     <div class="viewport">
         <div id="scr-login" class="screen active">
-            <div class="login-box">
-                <h1 style="letter-spacing:10px; margin-bottom:30px;">S×S</h1>
-                <input type="password" id="pass" placeholder="PASSWORD">
-                <button class="btn-main" onclick="auth()">UNLOCK</button>
-            </div>
+            <div class="brand-logo">S×S</div>
+            <input type="password" id="pass" placeholder="PASSWORD">
+            <button onclick="auth()" style="width:200px; padding:15px; border-radius:30px; background:var(--blue); color:white; border:none; font-weight:bold;">ENTER</button>
         </div>
 
         <div id="tab-home" class="screen">
-            <h2 style="text-align:center; margin-top:50px;">Private Space</h2>
-            <button onclick="location.reload()" style="margin:20px auto; color:#444; background:none; border:none;">Logout</button>
+            <h2 style="text-align:center; margin-top:50px; letter-spacing:5px;">WELCOME</h2>
+            <p style="text-align:center; color:#444; margin-top:10px;">Private Creative Domain</p>
         </div>
 
         <div id="tab-busana" class="screen">
             <div class="shelf">
                 <div class="t-box active" onclick="setM('none', this)">❌</div>
-                <div class="t-box" onclick="setM('https://i.imgur.com/8Qp4R8C.png', this)"><img src="https://i.imgur.com/8Qp4R8C.png"></div>
-                <div class="t-box" onclick="setM('https://i.imgur.com/P3UjN3F.png', this)"><img src="https://i.imgur.com/P3UjN3F.png"></div>
+                <div class="t-box" onclick="setM('https://www.svgrepo.com/show/491561/mannequin.svg', this)"><span>MODEL 1</span></div>
+                <div class="t-box" onclick="setM('https://www.svgrepo.com/show/415510/fashion-model.svg', this)"><span>MODEL 2</span></div>
+                <div class="t-box" onclick="setM('https://www.svgrepo.com/show/159392/fashion-model.svg', this)"><span>MODEL 3</span></div>
             </div>
 
-            <div id="studio-container">
-                <div id="mmg-layer" style="top:50px; left:50px;">
+            <div id="studio-box">
+                <div id="mmg-layer">
                     <img id="mmg-img" src="">
                 </div>
                 <canvas id="draw-canvas"></canvas>
             </div>
 
             <div class="controls">
-                <input type="color" id="pen-color" value="#ff758c" style="width:100%; height:35px; border:none; background:none;">
+                <input type="color" id="pen-color" value="#ff758c" style="width:100%; height:38px; border:none; background:none;">
                 <button class="btn-tool" onclick="xfrm('s', 1.1)">➕</button>
                 <button class="btn-tool" onclick="xfrm('s', 0.9)">➖</button>
                 <button class="btn-tool" onclick="xfrm('r', 15)">🔄</button>
                 <button class="btn-tool" onclick="xfrm('o')">💡</button>
             </div>
 
-            <button class="btn-tool" style="width:100%; background:var(--blue); border:none; margin-bottom:5px;" onclick="openReal()">LIAT HASIL NYATA</button>
+            <button class="btn-tool" style="width:100%; background:var(--blue); border:none; margin-bottom:5px; padding:15px;" onclick="openReal()">PREVIEW HASIL NYATA</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
                 <button class="btn-tool" onclick="clearD()">RESET</button>
-                <button class="btn-tool" style="background:var(--pink); border:none;" onclick="saveD()">SAVE</button>
+                <button class="btn-act btn-tool" style="background:var(--pink); border:none;" onclick="saveD()">SAVE ARSIP</button>
             </div>
             <div id="portfolio" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;"></div>
         </div>
     </div>
 
     <div id="reality-view">
-        <div style="position:relative; width:85%; background:#fff; border-radius:20px; overflow:hidden;">
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000" style="width:100%;">
-            <canvas id="mock-canvas" style="position:absolute; top:15%; left:0; width:100%; height:70%; opacity:0.7; pointer-events:none;"></canvas>
+        <div style="position:relative; width:85%; background:#fff; border-radius:25px; overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format" style="width:100%;">
+            <canvas id="mock-canvas" style="position:absolute; top:15%; left:0; width:100%; height:70%; opacity:0.8; pointer-events:none;"></canvas>
         </div>
-        <button onclick="closeReal()" style="margin-top:20px; padding:10px 30px; border-radius:15px; border:none; background:white; font-weight:bold;">TUTUP</button>
+        <button onclick="closeReal()" style="margin-top:25px; padding:15px 40px; border-radius:30px; border:none; background:white; font-weight:bold;">KEMBALI</button>
     </div>
 
     <script>
@@ -107,13 +105,12 @@
         let mmg = document.getElementById('mmg-layer'), scale = 1, rot = 0, opac = 0.3;
         let isDrag = false, sx, sy, ix, iy;
 
-        // Login & Nav
         function auth() {
             if(document.getElementById('pass').value === "sampai lulus") {
                 document.getElementById('scr-login').classList.remove('active');
                 document.getElementById('side-nav').style.display = 'flex';
                 go('busana', document.querySelectorAll('.nav-item')[1]);
-            } else { alert("Salah!"); }
+            } else { alert("PASSWORD SALAH"); }
         }
 
         function go(t, el) {
@@ -121,23 +118,21 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('tab-' + t).classList.add('active');
             el.classList.add('active');
-            if(t === 'busana') setTimeout(initDraw, 100);
+            if(t === 'busana') setTimeout(initDraw, 200);
         }
 
-        // Drag MMG (Logic diperbaiki biar gak ganggu tombol)
+        // Drag Template
         mmg.addEventListener('touchstart', (e) => {
             isDrag = true;
             sx = e.touches[0].clientX; sy = e.touches[0].clientY;
             ix = mmg.offsetLeft; iy = mmg.offsetTop;
-        }, {passive: true});
-
+        });
         window.addEventListener('touchmove', (e) => {
             if (!isDrag) return;
             mmg.style.left = (ix + (e.touches[0].clientX - sx)) + 'px';
             mmg.style.top = (iy + (e.touches[0].clientY - sy)) + 'px';
-        }, {passive: true});
-
-        window.addEventListener('touchend', () => { isDrag = false; });
+        });
+        window.addEventListener('touchend', () => isDrag = false);
 
         function xfrm(type, val) {
             if(type === 's') scale *= val;
@@ -154,28 +149,24 @@
             else { img.src = url; img.style.display = 'block'; }
         }
 
-        // Canvas Drawing
+        // Canvas Engine
         function initDraw() {
             cvs = document.getElementById('draw-canvas'); ctx = cvs.getContext('2d');
             cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
             ctx.lineCap = 'round'; ctx.lineWidth = 3;
 
             cvs.addEventListener('touchstart', (e) => {
-                drawing = true;
-                ctx.beginPath();
+                drawing = true; ctx.beginPath();
                 const r = cvs.getBoundingClientRect();
                 ctx.moveTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
             });
-
             cvs.addEventListener('touchmove', (e) => {
-                if(!drawing) return;
-                e.preventDefault();
+                if(!drawing) return; e.preventDefault();
                 const r = cvs.getBoundingClientRect();
                 ctx.strokeStyle = document.getElementById('pen-color').value;
                 ctx.lineTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
                 ctx.stroke();
-            }, {passive: false});
-
+            });
             cvs.addEventListener('touchend', () => drawing = false);
         }
 
@@ -183,6 +174,7 @@
             const mc = document.getElementById('mock-canvas');
             const mctx = mc.getContext('2d');
             mc.width = cvs.width; mc.height = cvs.height;
+            mctx.clearRect(0,0,mc.width,mc.height);
             mctx.drawImage(cvs, 0, 0);
             document.getElementById('reality-view').style.display = 'flex';
         }
@@ -192,8 +184,9 @@
             const img = document.createElement('img');
             img.src = cvs.toDataURL();
             img.style.width = "100%";
+            img.style.borderRadius = "10px";
             document.getElementById('portfolio').prepend(img);
-            alert("Disimpan!");
+            alert("ARSIP TERSIMPAN!");
         }
     </script>
 </body>

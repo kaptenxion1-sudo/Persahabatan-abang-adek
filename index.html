@@ -3,196 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quantum Space | Stable Pro</title>
+    <title>S × S Private Space</title>
     <style>
-        :root { --pink: #ff758c; --blue: #0093e9; --dark: #050505; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        :root { --pink: #ff758c; --blue: #0093e9; --dark: #050505; --border: rgba(255, 255, 255, 0.1); }
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--dark); color: white; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .bg-glow { position: fixed; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 0% 0%, rgba(0, 147, 233, 0.2), transparent 40%), radial-gradient(circle at 100% 100%, rgba(255, 117, 140, 0.2), transparent 40%); }
-        .viewport { width: 95%; max-width: 500px; height: 90vh; position: relative; overflow: hidden; border-radius: 25px; border: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(20px); display: flex; flex-direction: column; }
+        body { margin: 0; background: var(--dark); color: white; overflow: hidden; display: flex; height: 100vh; width: 100vw; }
         
-        /* Navigasi */
-        .nav-menu { display: none; justify-content: space-around; padding: 15px 10px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); z-index: 100; }
-        .nav-item { font-size: 0.7rem; font-weight: bold; color: #666; cursor: pointer; transition: 0.3s; padding: 8px 12px; border-radius: 10px; }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.1); }
+        /* Side Nav */
+        .side-nav { width: 65px; height: 100%; background: #000; border-right: 1px solid var(--border); display: none; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; }
+        .nav-item { font-size: 0.55rem; font-weight: bold; color: #444; cursor: pointer; margin-bottom: 25px; text-align: center; border-radius: 12px; transition: 0.3s; }
+        .nav-item.active { color: white; text-shadow: 0 0 10px var(--pink); }
 
-        .screen { position: absolute; top: 60px; bottom: 0; width: 100%; padding: 20px; transition: 0.4s ease; display: none; flex-direction: column; overflow-y: auto; }
-        .screen.active { display: flex; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .viewport { flex-grow: 1; height: 100%; position: relative; }
+        .screen { position: absolute; width: 100%; height: 100%; padding: 15px; display: none; flex-direction: column; overflow-y: auto; }
+        .screen.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Login */
-        #scr-login { top: 0; display: flex; justify-content: center; align-items: center; z-index: 200; background: var(--dark); }
-        input, textarea, select { width: 100%; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
-        button { padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-blue { background: var(--blue); color: white; }
-        .btn-pink { background: var(--pink); color: white; }
+        /* Login Clean */
+        #scr-login { justify-content: center; align-items: center; background: #000; z-index: 9999; }
+        .login-box { width: 85%; max-width: 320px; text-align: center; }
+        .brand-logo { font-size: 2.5rem; font-weight: 100; letter-spacing: 15px; margin-bottom: 40px; color: white; }
+        input { width: 100%; padding: 18px; background: #0a0a0a; border: 1px solid #222; color: white; border-radius: 20px; margin-bottom: 15px; text-align: center; font-size: 0.8rem; letter-spacing: 2px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--pink); }
 
-        /* Content */
-        .card { background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .chat-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; margin-bottom: 15px; }
-        .chat-bubble { padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; border-left: 4px solid transparent; }
+        /* Studio Engine */
+        #studio-container { flex: 0 0 420px; background: #fff; border-radius: 25px; position: relative; overflow: hidden; margin: 10px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #mmg-layer { position: absolute; z-index: 1; cursor: grab; transform-origin: center; }
+        #mmg-layer img { height: 350px; pointer-events: none; opacity: 0.3; }
+        #draw-canvas { position: absolute; top: 0; left: 0; z-index: 2; width: 100%; height: 100%; touch-action: none; }
+
+        /* Controls */
+        .shelf { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; }
+        .t-box { flex: 0 0 60px; height: 60px; background: #111; border-radius: 15px; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; }
+        .t-box.active { border-color: var(--pink); background: #1a1a1a; }
+        .t-box img { height: 75%; opacity: 0.6; }
+
+        .btn-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
+        .btn-act { background: #111; border: 1px solid #222; color: white; padding: 12px 0; border-radius: 12px; font-size: 0.6rem; font-weight: bold; transition: 0.2s; }
+        .btn-act:active { transform: scale(0.95); }
         
-        /* Canvas Pro Area */
-        #canvas-container { background: white; border-radius: 15px; width: 100%; height: 350px; position: relative; overflow: hidden; }
-        #canvas { width: 100%; height: 100%; touch-action: none; cursor: crosshair; position: relative; z-index: 5; }
-        #template-overlay { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; opacity: 0.2; display: flex; justify-content: center; align-items: center; }
+        /* Reality Overlay */
+        #reality-view { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
+        .mockup-card { position: relative; width: 88%; max-width: 380px; border-radius: 30px; overflow: hidden; background: #fff; box-shadow: 0 0 40px rgba(0,0,0,1); }
+        #mock-canvas { position: absolute; top: 15%; left: 0; width: 100%; height: 70%; pointer-events: none; opacity: 0.8; filter: contrast(1.1); }
         
-        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; padding-bottom: 30px; }
+        .gallery img { width: 100%; border-radius: 15px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
-    <div class="bg-glow"></div>
-    <div class="viewport">
-        
-        <div id="main-nav" class="nav-menu">
-            <div class="nav-item active" onclick="openTab('home', this)">HOME</div>
-            <div class="nav-item" onclick="openTab('curhat', this)">CURHAT</div>
-            <div class="nav-item" onclick="openTab('foto', this)">FOTO</div>
-            <div class="nav-item" onclick="openTab('busana', this)">BUSANA</div>
-        </div>
 
+    <div id="side-nav" class="side-nav">
+        <div class="nav-item active" onclick="go('home', this)">HOME</div>
+        <div class="nav-item" onclick="go('busana', this)">STUDIO</div>
+        <div class="nav-item" onclick="go('chat', this)">CHAT</div>
+    </div>
+
+    <div class="viewport">
         <div id="scr-login" class="screen active">
-            <div style="width: 80%; text-align: center;">
-                <h1 style="letter-spacing: 5px;">QUANTUM V8.0</h1>
-                <input type="text" id="user" placeholder="USERNAME">
+            <div class="login-box">
+                <div class="brand-logo">S×S</div>
                 <input type="password" id="pass" placeholder="PASSWORD">
-                <button class="btn-blue" style="width: 100%" onclick="toDashboard()">UNLOCK</button>
+                <button onclick="auth()" style="width:100%; padding:18px; border-radius:20px; background:linear-gradient(45deg, var(--blue), var(--pink)); color:white; border:none; font-weight:bold; letter-spacing:3px; font-size:0.7rem;">ENTER SPACE</button>
             </div>
         </div>
 
         <div id="tab-home" class="screen">
-            <div class="card" style="text-align: center; margin-top: 20px;">
-                <h2 style="margin:0"><span style="color:var(--blue)">SYAHRUL</span> × <span style="color:var(--pink)">SABILA</span></h2>
-                <p style="color: #888; font-size: 0.8rem;">Private Dashboard Active.</p>
-            </div>
-            <button class="btn-pink" onclick="location.reload()" style="margin-top: auto; margin-bottom: 20px;">LOGOUT</button>
-        </div>
-
-        <div id="tab-curhat" class="screen">
-            <div id="chat-list" class="chat-list"></div>
-            <div class="card" style="margin-top: auto;">
-                <textarea id="msg" placeholder="Ada cerita apa?" rows="2"></textarea>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-blue" style="flex:1" onclick="kirim('SYAHRUL')">SYAHRUL</button>
-                    <button class="btn-pink" style="flex:1" onclick="kirim('SABILA')">SABILA</button>
+            <div style="text-align: center; margin-top: 60px;">
+                <h1 style="font-weight: 100; letter-spacing: 10px;">WELCOME</h1>
+                <p style="color: #444; letter-spacing: 2px; font-size: 0.7rem;">PRIVATE DOMAIN ACTIVE</p>
+                <div style="margin-top: 50px; padding: 20px; border: 1px solid #111; border-radius: 20px;">
+                    <p style="font-size: 0.8rem; color: #888;">"Desain adalah bahasa yang tidak butuh kata-kata."</p>
                 </div>
+                <button onclick="location.reload()" style="background:transparent; color:#333; border:1px solid #222; padding:10px 20px; border-radius:30px; margin-top: 40px; font-size: 0.6rem;">SECURE LOGOUT</button>
             </div>
-        </div>
-
-        <div id="tab-foto" class="screen">
-            <div class="card">
-                <p style="font-size: 0.7rem; color: var(--blue); margin-bottom: 10px;">ADD NEW PHOTO</p>
-                <input type="file" id="img-input" accept="image/*" onchange="upFoto()">
-            </div>
-            <div id="gallery" class="gallery-grid"></div>
         </div>
 
         <div id="tab-busana" class="screen">
-            <div class="card" style="padding: 10px;">
-                <div id="canvas-container">
-                    <div id="template-overlay">
-                        <img id="croquis-img" src="https://i.imgur.com/2P3B8jK.png" style="height: 90%; display: none;">
-                    </div>
-                    <canvas id="canvas"></canvas>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px;">
-                    <select id="temp-select" onchange="changeTemp(this.value)" style="padding: 10px; font-size: 0.6rem;">
-                        <option value="none">NO TEMPLATE</option>
-                        <option value="female">WOMAN SILHOUETTE</option>
-                    </select>
-                    <input type="color" id="color" value="#ff758c" style="height: 40px;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
-                    <button class="btn-blue" onclick="setBrush(2)">PEN</button>
-                    <button class="btn-blue" onclick="setBrush(6)">MARKER</button>
-                </div>
-                <button class="btn-pink" style="width: 100%; margin-top: 10px;" onclick="saveImg()">SAVE DESIGN</button>
+            <div class="shelf">
+                <div class="t-box active" onclick="setM('none', this)">❌</div>
+                <div class="t-box" onclick="setM('https://i.imgur.com/8Qp4R8C.png', this)"><img src="https://i.imgur.com/8Qp4R8C.png"></div>
+                <div class="t-box" onclick="setM('https://i.imgur.com/P3UjN3F.png', this)"><img src="https://i.imgur.com/P3UjN3F.png"></div>
+                <div class="t-box" onclick="setM('https://i.imgur.com/2P3B8jK.png', this)"><img src="https://i.imgur.com/2P3B8jK.png"></div>
+                <div class="t-box" onclick="setM('https://i.imgur.com/T0T5M7A.png', this)"><img src="https://i.imgur.com/T0T5M7A.png"></div>
             </div>
-            <div id="portfolio" class="gallery-grid" style="padding-bottom: 20px;"></div>
+
+            <div id="studio-container">
+                <div id="mmg-layer" style="top: 10%; left: 20%;">
+                    <img id="mmg-img" src="">
+                </div>
+                <canvas id="draw-canvas"></canvas>
+            </div>
+
+            <div class="btn-row">
+                <input type="color" id="pen-color" value="#ff758c" style="width:100%; height:40px; border:none; background:none;">
+                <button class="btn-act" onclick="xfrm('s', 1.1)">➕</button>
+                <button class="btn-act" onclick="xfrm('s', 0.9)">➖</button>
+                <button class="btn-act" onclick="xfrm('r', 15)">🔄</button>
+                <button class="btn-act" onclick="xfrm('o', 0)">💡</button>
+            </div>
+
+            <button class="btn-act" style="width:100%; background:linear-gradient(to right, #6a11cb, #2575fc); margin-bottom:10px; border:none; padding:15px;" onclick="openReal()">PREVIEW HASIL NYATA</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button class="btn-act" onclick="clearD()">RESET</button>
+                <button class="btn-act" style="background:var(--pink); border:none;" onclick="saveD()">SIMPAN ARSIP</button>
+            </div>
+
+            <div id="portfolio" class="gallery"></div>
         </div>
     </div>
 
+    <div id="reality-view">
+        <div class="mockup-card">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000" style="width:100%;">
+            <canvas id="mock-canvas"></canvas>
+        </div>
+        <button onclick="closeReal()" style="margin-top:30px; padding:15px 40px; border-radius:30px; border:none; background:white; color:black; font-weight:bold; font-size:0.7rem; letter-spacing:2px;">BACK TO EDIT</button>
+    </div>
+
     <script>
-        // NAVIGATION LOGIC
-        function toDashboard() {
-            const u = document.getElementById('user').value.toLowerCase();
-            const p = document.getElementById('pass').value.toLowerCase();
-            if((u === "sasah" || u === "sasha") && p === "sampai lulus") {
+        // AUTH & NAVIGATION
+        function auth() {
+            if(document.getElementById('pass').value === "sampai lulus") {
                 document.getElementById('scr-login').style.display = 'none';
-                document.getElementById('main-nav').style.display = 'flex';
-                openTab('home', document.querySelector('.nav-item'));
-            } else { alert("ACCESS DENIED!"); }
+                document.getElementById('side-nav').style.display = 'flex';
+                go('busana', document.querySelectorAll('.nav-item')[1]);
+            } else { alert("ACCESS DENIED"); }
         }
 
-        function openTab(name, el) {
+        function go(t, el) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-' + name).classList.add('active');
-            if(el) el.classList.add('active');
-            if(name === 'busana') setTimeout(initCanvas, 200);
+            document.getElementById('tab-' + t).classList.add('active');
+            el.classList.add('active');
+            if(t === 'busana') setTimeout(initDraw, 100);
         }
 
-        // CURHAT LOGIC
-        function kirim(who) {
-            const txt = document.getElementById('msg').value; if(!txt) return;
-            const b = document.createElement('div'); b.className = 'chat-bubble';
-            b.style.background = (who === 'SYAHRUL') ? 'rgba(0,147,233,0.1)' : 'rgba(255,117,140,0.1)';
-            b.style.borderLeftColor = (who === 'SYAHRUL') ? 'var(--blue)' : 'var(--pink)';
-            b.innerHTML = `<b style="font-size:0.7rem; color:${(who === 'SYAHRUL') ? 'var(--blue)' : 'var(--pink)'}">${who}</b><br>${txt}`;
-            document.getElementById('chat-list').prepend(b);
-            document.getElementById('msg').value = '';
+        // TEMPLATE TRANSFORM
+        let mmg = document.getElementById('mmg-layer'), scale = 1, rot = 0, opac = 0.3;
+        let isDrag = false, sx, sy, ix, iy;
+
+        mmg.onmousedown = mmg.ontouchstart = (e) => {
+            isDrag = true;
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            sx = cx; sy = cy; ix = mmg.offsetLeft; iy = mmg.offsetTop;
+        };
+        window.onmousemove = window.ontouchmove = (e) => {
+            if(!isDrag) return;
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            mmg.style.left = (ix + (cx - sx)) + 'px';
+            mmg.style.top = (iy + (cy - sy)) + 'px';
+        };
+        window.onmouseup = window.ontouchend = () => isDrag = false;
+
+        function xfrm(type, val) {
+            if(type === 's') scale *= val;
+            if(type === 'r') rot += val;
+            if(type === 'o') { opac = (opac === 0.3) ? 0.05 : 0.3; mmg.style.opacity = opac; return; }
+            mmg.style.transform = `scale(${scale}) rotate(${rot}deg)`;
         }
 
-        // FOTO LOGIC
-        function upFoto() {
-            const file = document.getElementById('img-input').files[0];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = document.createElement('img'); img.src = e.target.result;
-                document.getElementById('gallery').prepend(img);
-            }; reader.readAsDataURL(file);
+        function setM(url, el) {
+            document.querySelectorAll('.t-box').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            const img = document.getElementById('mmg-img');
+            img.src = url; img.style.display = (url === 'none') ? 'none' : 'block';
         }
 
-        // BUSANA LOGIC (STABLE)
-        let cvs, ctx, drawing = false, bSize = 2;
-        function setBrush(s) { bSize = s; }
-        function changeTemp(v) {
-            const i = document.getElementById('croquis-img');
-            i.style.display = (v === 'none') ? 'none' : 'block';
-        }
-
-        function initCanvas() {
-            cvs = document.getElementById('canvas'); ctx = cvs.getContext('2d');
-            const con = document.getElementById('canvas-container');
-            const dpr = window.devicePixelRatio || 1;
-            cvs.width = con.clientWidth * dpr; cvs.height = con.clientHeight * dpr;
-            ctx.scale(dpr, dpr);
-            cvs.style.width = con.clientWidth + 'px'; cvs.style.height = con.clientHeight + 'px';
-            ctx.lineCap = 'round'; ctx.lineWidth = bSize;
-
+        // DRAWING ENGINE
+        let cvs, ctx, drawing = false;
+        function initDraw() {
+            cvs = document.getElementById('draw-canvas'); ctx = cvs.getContext('2d');
+            cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
+            ctx.lineCap = 'round'; ctx.lineWidth = 3;
             const getP = (e) => {
                 const r = cvs.getBoundingClientRect();
-                const cx = e.touches ? e.touches[0].clientX : e.clientX;
-                const cy = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: cx - r.left, y: cy - r.top };
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const y = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: x - r.left, y: y - r.top };
             };
-            const start = (e) => { drawing = true; ctx.beginPath(); const p = getP(e); ctx.moveTo(p.x, p.y); };
-            const draw = (e) => { 
+            cvs.onmousedown = cvs.ontouchstart = (e) => { drawing = true; ctx.beginPath(); const p = getP(e); ctx.moveTo(p.x, p.y); };
+            cvs.onmousemove = cvs.ontouchmove = (e) => {
                 if(!drawing) return; if(e.touches) e.preventDefault();
-                ctx.lineWidth = bSize; ctx.strokeStyle = document.getElementById('color').value;
-                const p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke(); 
+                ctx.strokeStyle = document.getElementById('pen-color').value;
+                const p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke();
             };
-            const stop = () => drawing = false;
-
-            cvs.onmousedown = start; cvs.onmousemove = draw; window.onmouseup = stop;
-            cvs.ontouchstart = start; cvs.ontouchmove = draw; cvs.ontouchend = stop;
+            cvs.onmouseup = cvs.ontouchend = () => drawing = false;
         }
 
-        function saveImg() {
+        // MOCKUP VIEW
+        function openReal() {
+            const mockCvs = document.getElementById('mock-canvas');
+            const mCtx = mockCvs.getContext('2d');
+            mockCvs.width = cvs.width; mockCvs.height = cvs.height;
+            mCtx.clearRect(0,0,mockCvs.width, mockCvs.height);
+            mCtx.drawImage(cvs, 0, 0);
+            document.getElementById('reality-view').style.display = 'flex';
+        }
+        function closeReal() { document.getElementById('reality-view').style.display = 'none'; }
+
+        function clearD() { ctx.clearRect(0,0,cvs.width,cvs.height); }
+        function saveD() {
             const img = document.createElement('img'); img.src = cvs.toDataURL();
             document.getElementById('portfolio').prepend(img);
-            alert("Design Saved!");
+            alert("Berhasil disimpan ke arsip Sabila! ✨");
         }
     </script>
 </body>
